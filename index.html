@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaftawook Menu</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="site-header sticky">
+        <div class="container">
+            <div class="top-bar">
+                <img src="images/kaftawook banner logo.png" alt="Kaftawook Logo" class="logo">
+                <div class="header-actions">
+                    <button id="currency-toggle" class="currency-btn">Change to $</button>
+                    <div class="cart-icon-wrapper" id="cart-icon-wrapper">
+                        <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.9 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search for your favorite item...">
+            </div>
+            <div class="filter-scroll-wrapper">
+                <div class="filter-container">
+                    <button class="filter-btn active" data-category="all">All</button>
+                    <button class="filter-btn" data-category="Kafta">Kafta</button>
+                    <button class="filter-btn" data-category="Tawouk">Tawouk</button>
+                    <button class="filter-btn" data-category="Sandwich">Sandwich</button>
+                    <button class="filter-btn" data-category="Burgers">Burgers</button>
+                    <button class="filter-btn" data-category="Combo">Combo</button>
+                    <button class="filter-btn" data-category="Fries">Fries</button>
+                    <button class="filter-btn" data-category="Desserts">Desserts</button>
+                    <button class="filter-btn" data-category="Drinks">Drinks</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div id="menu-container" class="menu-container">
+                </div>
+        </div>
+    </main>
+
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-cart-btn" id="close-cart-btn">&times;</button>
+        </div>
+        <div class="cart-items-container" id="cart-items"></div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">0 L.L</span>
+            </div>
+            <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p><strong>Kaftawook</strong></p>
+            <p>Burj Abi Haidar, near Afran Al Ajina Al Zahabiyah</p>
+            <p>+961 03 005 090</p>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="customization-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Customize Item</h2>
+                <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-removals">
+                    <h4>Remove Ingredients</h4>
+                    <div id="modal-removals-list" class="options-list"></div>
+                </div>
+                <div id="modal-addons">
+                    <h4>Add Extras</h4>
+                    <div id="modal-addons-list" class="options-list"></div>
+                </div>
+                <div class="modal-notes">
+                    <h4>Notes</h4>
+                    <textarea id="modal-notes-input" placeholder="e.g., extra toasted, cut in half..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-add-to-cart-btn" class="add-to-cart-btn">
+                    Add to Cart (<span id="modal-total-price">0</span>)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/categories/kafta.js"></script>
+    <script src="js/categories/tawouk.js"></script>
+    <script src="js/categories/sandwich.js"></script>
+    <script src="js/categories/burgers.js"></script>
+    <script src="js/categories/combo.js"></script>
+    <script src="js/categories/fries.js"></script>
+    <script src="js/categories/desserts.js"></script>
+    <script src="js/categories/drinks.js"></script>
+    <script src="js/customizations.js"></script> 
+    <script src="js/menu.js"></script>
+</body>
+</html>
