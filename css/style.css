@@ -520,3 +520,54 @@ body {
 .menu-item {
     cursor: pointer;
 }
+
+/* ------------------------- */
+/* NEW: TOAST NOTIFICATION   */
+/* ------------------------- */
+.toast {
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 30px;
+    min-width: 200px;
+    background-color: #4CAF50; /* Green success color */
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    z-index: 1200; /* Make sure it's on top of everything */
+    font-weight: 500;
+    transition: opacity 0.5s, top 0.5s ease;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    top: 50px;
+}
+
+/* ITEM ADDED ANIMATION      */
+/* ------------------------- */
+@keyframes flash-border {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.menu-item.item-added-animation::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -4px;
+    right: -4px;
+    bottom: -2px;
+    border-radius: 8px;
+    border: 2px solid #4CAF50; /* Green success color */
+    opacity: 0;
+    animation: flash-border 0.7s ease-out;
+}

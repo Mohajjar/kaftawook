@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartItemsContainer = document.getElementById("cart-items");
   const cartCountElement = document.getElementById("cart-count");
   const cartSubtotalElement = document.getElementById("cart-subtotal");
+  const toastNotification = document.getElementById("toast-notification");
   // Modal selectors
   const modal = document.getElementById("customization-modal");
   const closeModalBtn = document.getElementById("close-modal-btn");
@@ -36,6 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentCurrency = "LBP";
   const exchangeRate = 90000;
   let currentItemForModal = null;
+  let toastTimeout;
+
+  // --- TOAST NOTIFICATION LOGIC ---
+  function showToast(message) {
+    clearTimeout(toastTimeout);
+    toastNotification.textContent = message;
+    toastNotification.classList.add("show");
+    toastTimeout = setTimeout(() => {
+      toastNotification.classList.remove("show");
+    }, 3000);
+  }
 
   // --- Price Formatting ---
   function formatPrice(priceInLBP) {
@@ -49,11 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function openModal(item) {
     currentItemForModal = item;
     modalTitle.textContent = item.name;
-
     const itemOptions = customizations[item.name] || {};
     populateOptions(modalRemovalsList, itemOptions.removals, "removal");
     populateOptions(modalAddonsList, itemOptions.addons, "addon");
-
     updateModalPrice();
     modal.classList.add("is-visible");
   }
@@ -74,14 +84,13 @@ document.addEventListener("DOMContentLoaded", () => {
     options.forEach((opt) => {
       const priceString = opt.price > 0 ? ` (+${formatPrice(opt.price)})` : "";
       listElement.innerHTML += `
-                <div class="option-item">
-                    <label>
-                        <input type="checkbox" data-price="${opt.price}" data-name="${opt.name}" data-type="${type}">
-                        ${opt.name}
-                    </label>
-                    <span class="price">${priceString}</span>
-                </div>
-            `;
+        <div class="option-item">
+            <label>
+                <input type="checkbox" data-price="${opt.price}" data-name="${opt.name}" data-type="${type}">
+                ${opt.name}
+            </label>
+            <span class="price">${priceString}</span>
+        </div>`;
     });
   }
 
@@ -106,7 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const type = checkbox.dataset.type;
         selectedOptions[type + "s"].push(checkbox.dataset.name);
       });
-
     const note = modalNotesInput.value.trim();
     let finalPrice = currentItemForModal.price;
     modal
@@ -114,11 +122,9 @@ document.addEventListener("DOMContentLoaded", () => {
       .forEach((addon) => {
         finalPrice += parseInt(addon.dataset.price);
       });
-
     const uniqueId = `${currentItemForModal.name}|${JSON.stringify(
       selectedOptions
     )}|${note}`;
-
     const existingItem = cart.find((item) => item.uniqueId === uniqueId);
     if (existingItem) {
       existingItem.quantity++;
@@ -133,15 +139,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
     updateCartUI();
+    showToast("Added to Cart!");
     closeModal();
   }
 
   function adjustQuantity(uniqueId, action) {
     const item = cart.find((cartItem) => cartItem.uniqueId === uniqueId);
     if (!item) return;
-
     if (action === "increase") {
       item.quantity++;
+      showToast("Cart Updated!");
     } else if (action === "decrease") {
       item.quantity--;
       if (item.quantity <= 0) {
@@ -159,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
       cartSubtotalElement.textContent = formatPrice(0);
       return;
     }
-
     let subtotal = 0;
     cart.forEach((item) => {
       subtotal += item.price * item.quantity;
@@ -177,8 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (item.note) {
         customizationsHTML += `<p class="cart-item-customization">Note: ${item.note}</p>`;
       }
-
-      // **THE FIX IS HERE:** Using single quotes around the data-id value
       cartItemsContainer.innerHTML += `
         <div class="cart-item">
             <div class="cart-item-details">
@@ -195,8 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   item.uniqueId
                 }' data-action='increase'>+</button>
             </div>
-        </div>
-      `;
+        </div>`;
     });
     cartSubtotalElement.textContent = formatPrice(subtotal);
   }
@@ -212,21 +215,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const activeCategory =
       document.querySelector(".filter-btn.active").dataset.category;
     const searchTerm = searchInput.value.toLowerCase();
-
     let categoryFiltered =
       activeCategory === "all"
         ? allMenuItems
         : allMenuItems.filter((item) => item.category === activeCategory);
-
     let finalFiltered = categoryFiltered.filter((item) =>
       item.name.toLowerCase().includes(searchTerm)
     );
-
     if (finalFiltered.length === 0 && searchTerm !== "") {
       const allItemsFiltered = allMenuItems.filter((item) =>
         item.name.toLowerCase().includes(searchTerm)
       );
-
       if (allItemsFiltered.length > 0) {
         document.querySelector(".filter-btn.active").classList.remove("active");
         document
@@ -235,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
         finalFiltered = allItemsFiltered;
       }
     }
-
     displayMenuItems(
       finalFiltered,
       document.querySelector(".filter-btn.active").dataset.category
@@ -285,28 +283,40 @@ document.addEventListener("DOMContentLoaded", () => {
                   : ""
               }
           </div>
-      </div>
-    `;
+      </div>`;
   }
 
   // --- EVENT LISTENERS ---
   menuContainer.addEventListener("click", (e) => {
     const menuItemElement = e.target.closest(".menu-item");
     if (!menuItemElement) return;
-
     const itemName = menuItemElement.dataset.name;
     const itemData = allMenuItems.find((i) => i.name === itemName);
 
     if (!customizations[itemName]) {
+      // If item has no customization options
       const uniqueId = `${itemData.name}|{}|`;
       const existingItem = cart.find((i) => i.uniqueId === uniqueId);
       if (existingItem) {
         existingItem.quantity++;
       } else {
-        cart.push({ ...itemData, quantity: 1, uniqueId, options: {} });
+        cart.push({
+          ...itemData,
+          quantity: 1,
+          uniqueId,
+          options: { removals: [], addons: [] },
+        });
       }
       updateCartUI();
+
+      // Show toast and border animation
+      showToast("Added to Cart!");
+      menuItemElement.classList.add("item-added-animation");
+      setTimeout(() => {
+        menuItemElement.classList.remove("item-added-animation");
+      }, 700);
     } else {
+      // If item IS customizable
       const customizedVersionsInCart = cart.filter((i) => i.name === itemName);
       if (customizedVersionsInCart.length > 0) {
         const firstVersion = customizedVersionsInCart[0];
@@ -346,6 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cartItemsContainer.addEventListener("click", (e) => {
     if (e.target.classList.contains("quantity-btn")) {
+      // **THE FIX IS HERE:** Changed 'e.target.dataset..id' to 'e.target.dataset.id'
       const uniqueId = e.target.dataset.id;
       const action = e.target.dataset.action;
       adjustQuantity(uniqueId, action);
