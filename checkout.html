@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Kaftawook</title>
+    <!-- Link to our main style.css and a new checkout-specific stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="checkout-header">
+        <div class="header-content">
+            <a href="index.html" class="back-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"/></svg>
+                Back to Menu
+            </a>
+            <img src="images/kaftawook banner logo.png" alt="Kaftawook Logo" class="logo">
+            <div style="width: 120px;"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="checkout-container">
+        <!-- Forms Section -->
+        <div class="checkout-forms">
+            <!-- Delivery Section -->
+            <div class="form-section">
+                <h3 class="section-title">Delivery Information</h3>
+                <p class="delivery-note-checkout">Please note: Delivery is only available within Beirut.</p>
+                
+                <div class="delivery-options">
+                    <div class="delivery-option selected" data-type="delivery">
+                        <h4>🚚 Delivery</h4>
+                        <p>30-45 mins</p>
+                    </div>
+                    <div class="delivery-option" data-type="pickup">
+                        <h4>🏃 Pickup</h4>
+                        <p>15-20 mins • Free</p>
+                    </div>
+                </div>
+
+                <div class="form-grid" id="delivery-form">
+                    <div class="form-group full-width">
+                        <label for="full-name">Full Name *</label>
+                        <input type="text" id="full-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" placeholder="+961" required>
+                    </div>
+                    <div class="form-group full-width" id="address-group">
+                        <label for="address">Delivery Address *</label>
+                        <input type="text" id="address" placeholder="Street, Building, Floor" required>
+                    </div>
+                    <!-- UPDATED: Added an ID here -->
+                    <div class="form-group full-width" id="delivery-notes-group">
+                        <label for="delivery-notes">Delivery Instructions</label>
+                        <textarea id="delivery-notes" placeholder="e.g., Ring the bell, call on arrival, etc."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="form-section">
+                <h3 class="section-title">Payment Method</h3>
+                <div class="payment-methods">
+                    <div class="payment-method selected" data-method="cash">
+                        <input type="radio" name="payment" checked>
+                        <div class="payment-details">
+                            <h4>💵 Cash on Delivery</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary-sticky">
+            <div class="order-summary">
+                <div class="summary-header">
+                    <h3>Order Summary</h3>
+                </div>
+                
+                <div class="order-items" id="order-items-summary">
+                    <!-- Items will be populated by JavaScript -->
+                </div>
+
+                <div class="pricing-breakdown">
+                    <div class="price-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal-summary">0</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Delivery Fee</span>
+                        <span id="delivery-fee-summary">0</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span id="total-summary">0</span>
+                    </div>
+                </div>
+
+                <div class="checkout-actions">
+                    <button class="place-order-btn" id="place-order-btn">
+                        <span>Place Order</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="success-modal">
+        <div class="success-content">
+            <div class="success-icon">
+                <svg width="50" height="50" fill="white" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            </div>
+            <h2>Order Confirmed!</h2>
+            <p>Your order has been placed successfully.</p>
+            <p>Estimated delivery: <strong id="delivery-time">30-45 minutes</strong></p>
+            <div class="success-actions">
+                <a href="index.html" class="success-btn secondary">Back to Menu</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/checkout.js"></script>
+</body>
+</html>
+

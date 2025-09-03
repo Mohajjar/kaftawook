@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartCountElement = document.getElementById("cart-count");
   const cartSubtotalElement = document.getElementById("cart-subtotal");
   const toastNotification = document.getElementById("toast-notification");
+  const checkoutBtn = document.querySelector(".checkout-btn");
   // Modal selectors
   const modal = document.getElementById("customization-modal");
   const closeModalBtn = document.getElementById("close-modal-btn");
@@ -33,8 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalTotalPrice = document.getElementById("modal-total-price");
 
   // --- State Management ---
-  let cart = [];
-  let currentCurrency = "LBP";
+  // FIXED: Load cart and currency from localStorage to persist data between pages
+  let cart = JSON.parse(localStorage.getItem("kaftawookCart") || "[]");
+  let currentCurrency = localStorage.getItem("kaftawookCurrency") || "LBP";
   const exchangeRate = 90000;
   let currentItemForModal = null;
   let toastTimeout;
@@ -294,7 +296,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const itemData = allMenuItems.find((i) => i.name === itemName);
 
     if (!customizations[itemName]) {
-      // If item has no customization options
       const uniqueId = `${itemData.name}|{}|`;
       const existingItem = cart.find((i) => i.uniqueId === uniqueId);
       if (existingItem) {
@@ -308,15 +309,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       updateCartUI();
-
-      // Show toast and border animation
       showToast("Added to Cart!");
       menuItemElement.classList.add("item-added-animation");
       setTimeout(() => {
         menuItemElement.classList.remove("item-added-animation");
       }, 700);
     } else {
-      // If item IS customizable
       const customizedVersionsInCart = cart.filter((i) => i.name === itemName);
       if (customizedVersionsInCart.length > 0) {
         const firstVersion = customizedVersionsInCart[0];
@@ -333,6 +331,16 @@ document.addEventListener("DOMContentLoaded", () => {
         openModal(itemData);
       }
     }
+  });
+
+  checkoutBtn.addEventListener("click", () => {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+    localStorage.setItem("kaftawookCart", JSON.stringify(cart));
+    localStorage.setItem("kaftawookCurrency", currentCurrency);
+    window.location.href = "checkout.html";
   });
 
   currencyToggleBtn.addEventListener("click", () => {
@@ -356,7 +364,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cartItemsContainer.addEventListener("click", (e) => {
     if (e.target.classList.contains("quantity-btn")) {
-      // **THE FIX IS HERE:** Changed 'e.target.dataset..id' to 'e.target.dataset.id'
       const uniqueId = e.target.dataset.id;
       const action = e.target.dataset.action;
       adjustQuantity(uniqueId, action);
@@ -373,6 +380,17 @@ document.addEventListener("DOMContentLoaded", () => {
     cartSidebar.classList.remove("is-open")
   );
 
-  // --- Initial Run ---
-  filterAndSearch();
+  // --- INITIALIZATION ---
+  // This will run when the page first loads
+  function initialize() {
+    // Set the currency button text based on the loaded currency
+    currencyToggleBtn.textContent =
+      currentCurrency === "LBP" ? "Change to $" : "Change to L.L";
+    // Render the cart with the loaded items
+    updateCartUI();
+    // Display the menu
+    filterAndSearch();
+  }
+
+  initialize();
 });
