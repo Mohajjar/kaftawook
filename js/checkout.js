@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let deliveryType = "delivery";
   const exchangeRate = 90000;
   const deliveryFeeLBP = 100000;
+  // PASTE YOUR SHEETDB API URL HERE
+  const sheetDbUrl = "https://sheetdb.io/api/v1/vdctpm8verwrq";
 
   // --- ELEMENT SELECTORS ---
   const orderItemsContainer = document.getElementById("order-items-summary");
@@ -28,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderOrderSummary() {
     if (cart.length === 0) {
       orderItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-      // Also update totals to 0
       subtotalDisplay.textContent = formatPrice(0);
       deliveryFeeDisplay.textContent = formatPrice(0);
       totalDisplay.textContent = formatPrice(0);
@@ -120,13 +121,65 @@ document.addEventListener("DOMContentLoaded", () => {
     return isValid;
   }
 
-  // --- EVENT LISTENERS ---
+  // --- UPDATED EVENT LISTENER ---
   placeOrderBtn.addEventListener("click", () => {
     if (validateForm()) {
-      // Here you would typically send the order to a server.
-      // For now, we'll just show the success message.
-      localStorage.removeItem("kaftawookCart"); // Clear cart after order
-      successModal.classList.add("show");
+      placeOrderBtn.disabled = true;
+      placeOrderBtn.textContent = "Placing Order...";
+
+      // 1. Format the data with the CORRECT column names
+      const orderData = {
+        Date: new Date().toLocaleString("en-GB"), // Capital 'D'
+        Name: document.getElementById("full-name").value, // Capital 'N'
+        Phone: document.getElementById("phone").value, // Capital 'P'
+        Address:
+          deliveryType === "delivery"
+            ? document.getElementById("address").value
+            : "Pickup", // Capital 'A'
+        "Delivery Notes":
+          deliveryType === "delivery"
+            ? document.getElementById("delivery-notes").value
+            : "", // Correct spacing
+        "Order Details": cart
+          .map((item) => {
+            // Correct spacing
+            let details = `${item.quantity}x ${item.name}`;
+            if (item.options && item.options.removals.length > 0)
+              details += ` (No: ${item.options.removals.join(", ")})`;
+            if (item.options && item.options.addons.length > 0)
+              details += ` (Add: ${item.options.addons.join(", ")})`;
+            if (item.note) details += ` (Note: ${item.note})`;
+            return details;
+          })
+          .join("\n"),
+        Total: totalDisplay.textContent, // Capital 'T'
+      };
+
+      // 2. Send the data to the Google Sheet API
+      fetch(sheetDbUrl, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: [orderData],
+        }),
+      })
+        .then((response) => response.json())
+        .then(() => {
+          // 3. On success, clear the cart and show the confirmation
+          localStorage.removeItem("kaftawookCart");
+          successModal.classList.add("show");
+          placeOrderBtn.disabled = false;
+          placeOrderBtn.textContent = "Place Order";
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("There was an error placing your order. Please try again.");
+          placeOrderBtn.disabled = false;
+          placeOrderBtn.textContent = "Place Order";
+        });
     }
   });
 
