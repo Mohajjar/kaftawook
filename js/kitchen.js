@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // PASTE YOUR SHEETDB API URL HERE
-  const sheetDbUrl = "YOUR_SHEETDB_API_URL_HERE";
+  const sheetDbUrl = "https://sheetdb.io/api/v1/vdctpm8verwrq";
 
   const ordersGrid = document.getElementById("orders-grid");
   const statusIndicator = document.getElementById("status-indicator");
