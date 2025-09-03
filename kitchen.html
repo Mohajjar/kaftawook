@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaftawook - Kitchen Orders</title>
+    <link rel="stylesheet" href="css/kitchen.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="kitchen-header">
+        <div class="header-content">
+            <h1>Kaftawook Live Orders</h1>
+            <div class="status-indicator" id="status-indicator">
+                <div class="dot"></div>
+                <span id="status-text">Connecting...</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="orders-grid" id="orders-grid">
+        <!-- New orders will be dynamically added here -->
+    </main>
+
+    <!-- Tone.js for sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script src="js/kitchen.js"></script>
+</body>
+</html>
